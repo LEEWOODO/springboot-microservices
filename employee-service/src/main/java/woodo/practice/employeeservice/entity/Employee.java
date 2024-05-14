@@ -1,6 +1,12 @@
 package woodo.practice.employeeservice.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +28,5 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
     private String departmentCode;
-    private String organizationCode;
+    // private String organizationCode;
 }

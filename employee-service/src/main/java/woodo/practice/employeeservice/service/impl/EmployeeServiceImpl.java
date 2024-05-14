@@ -1,100 +1,80 @@
 package woodo.practice.employeeservice.service.impl;
 
+import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import woodo.practice.employeeservice.dto.APIResponseDto;
+import woodo.practice.employeeservice.dto.DepartmentDto;
 import woodo.practice.employeeservice.dto.EmployeeDto;
 import woodo.practice.employeeservice.entity.Employee;
-import woodo.practice.employeeservice.mapper.EmployeeMapper;
 import woodo.practice.employeeservice.repository.EmployeeRepository;
+import woodo.practice.employeeservice.service.APIClient;
 import woodo.practice.employeeservice.service.EmployeeService;
 
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
-
     private EmployeeRepository employeeRepository;
 
-   // private RestTemplate restTemplate;
-//    private WebClient webClient;
-//    private APIClient apiClient;
+    // private RestTemplate restTemplate;
+    // private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
-        Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+        Employee employee = new Employee(
+            employeeDto.getId(),
+            employeeDto.getFirstName(),
+            employeeDto.getLastName(),
+            employeeDto.getEmail(),
+            employeeDto.getDepartmentCode()
+        );
 
         Employee saveDEmployee = employeeRepository.save(employee);
 
-        EmployeeDto savedEmployeeDto = EmployeeMapper.mapToEmployeeDto(saveDEmployee);
+        EmployeeDto savedEmployeeDto = new EmployeeDto(
+            saveDEmployee.getId(),
+            saveDEmployee.getFirstName(),
+            saveDEmployee.getLastName(),
+            saveDEmployee.getEmail(),
+            saveDEmployee.getDepartmentCode()
+        );
 
         return savedEmployeeDto;
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+    public APIResponseDto getEmployeeById(Long employeeId) {
 
-        return EmployeeMapper.mapToEmployeeDto(employee);
+        Employee employee = employeeRepository.findById(employeeId).get();
 
+        //        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity("http://localhost:8080/api/departments/" + employee.getDepartmentCode(),
+        //                DepartmentDto.class);
+        //
+        //        DepartmentDto departmentDto = responseEntity.getBody();
+
+        //        DepartmentDto departmentDto = webClient.get()
+        //                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+        //                .retrieve()
+        //                .bodyToMono(DepartmentDto.class)
+        //                .block();
+
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+
+        EmployeeDto employeeDto = new EmployeeDto(
+            employee.getId(),
+            employee.getFirstName(),
+            employee.getLastName(),
+            employee.getEmail(),
+            employee.getDepartmentCode()
+        );
+
+        APIResponseDto apiResponseDto = new APIResponseDto();
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+
+        return apiResponseDto;
     }
-
-//    //@CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
-//    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
-//    @Override
-//    public APIResponseDto getEmployeeById(Long employeeId) {
-//
-//        LOGGER.info("inside getEmployeeById() method");
-//        Employee employee = employeeRepository.findById(employeeId).get();
-//
-////        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity("http://DEPARTMENT-SERVICE/api/departments/" + employee.getDepartmentCode(),
-////                DepartmentDto.class);
-////
-////        DepartmentDto departmentDto = responseEntity.getBody();
-//
-//        DepartmentDto departmentDto = webClient.get()
-//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-//                .retrieve()
-//                .bodyToMono(DepartmentDto.class)
-//                .block();
-//
-//      //  DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
-//
-//        OrganizationDto organizationDto = webClient.get()
-//                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
-//                .retrieve()
-//                .bodyToMono(OrganizationDto.class)
-//                .block();
-//
-//        EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
-//
-//        APIResponseDto apiResponseDto = new APIResponseDto();
-//        apiResponseDto.setEmployee(employeeDto);
-//        apiResponseDto.setDepartment(departmentDto);
-//        apiResponseDto.setOrganization(organizationDto);
-//        return apiResponseDto;
-//    }
-//
-//    public APIResponseDto getDefaultDepartment(Long employeeId, Exception exception) {
-//
-//        LOGGER.info("inside getDefaultDepartment() method");
-//
-//        Employee employee = employeeRepository.findById(employeeId).get();
-//
-//        DepartmentDto departmentDto = new DepartmentDto();
-//        departmentDto.setDepartmentName("R&D Department");
-//        departmentDto.setDepartmentCode("RD001");
-//        departmentDto.setDepartmentDescription("Research and Development Department");
-//
-//        EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
-//
-//        APIResponseDto apiResponseDto = new APIResponseDto();
-//        apiResponseDto.setEmployee(employeeDto);
-//        apiResponseDto.setDepartment(departmentDto);
-//        return apiResponseDto;
-//    }
 }
