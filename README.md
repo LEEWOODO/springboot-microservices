@@ -7,3 +7,5 @@
 - docker run -d -p 15672:15672 -p 5672:5672 --name rabbitmq rabbitmq
 - 플러그인 설치 docker exec rabbitmq rabbitmq-plugins enable rabbitmq_management
 - 계정 guest / guest
+## zipkin docker 설치
+- docker run -d -p 9411:9411 openzipkin/zipkin
