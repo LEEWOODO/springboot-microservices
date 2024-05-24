@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import woodo.practice.employeeservice.dto.APIResponseDto;
 import woodo.practice.employeeservice.dto.DepartmentDto;
 import woodo.practice.employeeservice.dto.EmployeeDto;
+import woodo.practice.employeeservice.dto.OrganizationDto;
 import woodo.practice.employeeservice.entity.Employee;
 import woodo.practice.employeeservice.mapper.EmployeeMapper;
 import woodo.practice.employeeservice.repository.EmployeeRepository;
@@ -58,11 +59,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 			.bodyToMono(DepartmentDto.class)
 			.block();
 
+		OrganizationDto organizationDto = webClient.get()
+			.uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+			.retrieve()
+			.bodyToMono(OrganizationDto.class)
+			.block();
+
 		EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
 		APIResponseDto apiResponseDto = new APIResponseDto();
 		apiResponseDto.setEmployee(employeeDto);
 		apiResponseDto.setDepartment(departmentDto);
+		apiResponseDto.setOrganization(organizationDto);
 
 		return apiResponseDto;
 	}
