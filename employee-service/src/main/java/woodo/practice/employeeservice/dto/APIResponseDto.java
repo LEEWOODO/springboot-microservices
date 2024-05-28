@@ -1,5 +1,6 @@
 package woodo.practice.employeeservice.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.Setter;
  * -----------------------------------------------------------
  * 2024/05/13      dnejdzlr2          최초 생성
  */
+@Schema(description = "API Response Data Transfer Object")
 @Getter
 @Setter
 @NoArgsConstructor
