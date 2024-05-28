@@ -14,6 +14,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="api-gateway" target="17" />
+      <module name="organization-service" target="17" />
       <module name="service-registry (1) (net.javaguides)" target="1.5" />
     </bytecodeTargetLevel>
   </component>
