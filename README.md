@@ -9,3 +9,6 @@
 - 계정 guest / guest
 ## zipkin docker 설치
 - docker run -d -p 9411:9411 openzipkin/zipkin
+## 서비스 실행순서
+1. ServiceRegistryApplication
+2. ApiGatewayApplication
