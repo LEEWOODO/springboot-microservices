@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import woodo.practice.organizationservice.dto.OrganizationDto;
 import woodo.practice.organizationservice.service.OrganizationService;
@@ -38,6 +39,12 @@ public class OrganizationController {
 	public ResponseEntity<OrganizationDto> getOrganization(@PathVariable("code") String organizationCode) {
 		OrganizationDto organizationDto = organizationService.getOrganizationByCode(organizationCode);
 		return ResponseEntity.ok(organizationDto);
+	}
+
+	@GetMapping("/check")
+	public String check(HttpServletRequest request){
+		// 포트 확인용
+		return "Organization Service is working on port " + request.getServerPort();
 	}
 
 }

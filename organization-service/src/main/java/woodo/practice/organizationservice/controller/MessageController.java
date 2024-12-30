@@ -1,11 +1,9 @@
-package woodo.practice.departmentservice.controller;
+package woodo.practice.organizationservice.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Project        : springboot-microservices
@@ -20,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RefreshScope
 @RestController
-@Slf4j
 public class MessageController {
+
 	@Value("${spring.boot.message}")
 	private String message;
 
@@ -29,5 +27,4 @@ public class MessageController {
 	public String message(){
 		return message;
 	}
-
 }

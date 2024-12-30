@@ -4,6 +4,7 @@ package woodo.practice.employeeservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +36,11 @@ public class EmployeeController {
     public ResponseEntity<APIResponseDto> getEmployee(@PathVariable("id") Long employeeId){
         APIResponseDto employeeDto = employeeService.getEmployeeById(employeeId);
         return new ResponseEntity<>(employeeDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/check")
+    public String check(HttpServletRequest request){
+        // 포트 확인용
+        return "Employee Service is working on port " + request.getServerPort();
     }
 }
