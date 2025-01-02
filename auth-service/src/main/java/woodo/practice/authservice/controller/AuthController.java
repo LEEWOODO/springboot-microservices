@@ -3,6 +3,11 @@ package woodo.practice.authservice.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +20,7 @@ import lombok.AllArgsConstructor;
 import woodo.practice.authservice.dto.request.LoginRequest;
 import woodo.practice.authservice.dto.response.LoginResponse;
 import woodo.practice.authservice.global.util.JwtUtil;
+import woodo.practice.authservice.security.JwtTokenProvider;
 
 /**
  * Project        : springboot-microservices
@@ -32,6 +38,8 @@ import woodo.practice.authservice.global.util.JwtUtil;
 @RequestMapping("api/auth")
 @AllArgsConstructor
 public class AuthController {
+	private final AuthenticationManager authenticationManager;
+	private final JwtTokenProvider tokenProvider;
 
 	@GetMapping("/hello")
 	public String hello() {
@@ -56,19 +64,39 @@ public class AuthController {
 		return "Employee Service is working on port " + request.getServerPort();
 	}
 
+	// @PostMapping("/login")
+	// public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+	// 	// 사용자 인증 로직
+	// 	if (isValidUser(loginRequest.getUsername(), loginRequest.getPassword())) {
+	// 		String accessToken = JwtUtil.generateToken(loginRequest.getUsername());
+	// 		return ResponseEntity.ok(new LoginResponse(accessToken, "refreshToken", 3600L));
+	// 	} else {
+	// 		return ResponseEntity.status(401).body("Invalid credentials");
+	// 	}
+	// }
+	//
+	// private boolean isValidUser(String username, String password) {
+	// 	// 실제 사용자 인증 로직 (DB 조회 등)
+	// 	return "test_user".equals(username) && "password123".equals(password);
+	// }
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-		// 사용자 인증 로직
-		if (isValidUser(loginRequest.getUsername(), loginRequest.getPassword())) {
-			String accessToken = JwtUtil.generateToken(loginRequest.getUsername());
-			return ResponseEntity.ok(new LoginResponse(accessToken, "refreshToken", 3600L));
-		} else {
-			return ResponseEntity.status(401).body("Invalid credentials");
-		}
-	}
+		Authentication authentication = authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken(
+				loginRequest.getUsername(),
+				loginRequest.getPassword()
+			)
+		);
 
-	private boolean isValidUser(String username, String password) {
-		// 실제 사용자 인증 로직 (DB 조회 등)
-		return "test_user".equals(username) && "password123".equals(password);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		String jwt = tokenProvider.generateToken((UserDetails) authentication.getPrincipal());
+
+		return ResponseEntity.ok(LoginResponse.builder()
+			.accessToken(jwt)
+			.tokenType("Bearer")
+			.username(loginRequest.getUsername())
+			.build());
 	}
 }

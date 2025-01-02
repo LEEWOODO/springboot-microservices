@@ -1,9 +1,12 @@
-package woodo.practice.authservice.dto.response;
+package woodo.practice.authservice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * Project        : springboot-microservices
@@ -17,9 +20,15 @@ import lombok.Getter;
  * 2025. 1. 2.      dnejdzlr2          최초 생성
  */
 @Data
-@Builder
-public class LoginResponse {
-	private String accessToken;
-	private String tokenType;
+@Entity
+@Table(name = "users")
+public class User {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(unique = true)
 	private String username;
+	private String password;
+	private String role;
 }

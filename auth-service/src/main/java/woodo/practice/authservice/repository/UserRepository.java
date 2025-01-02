@@ -1,9 +1,10 @@
-package woodo.practice.authservice.dto.response;
+package woodo.practice.authservice.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import woodo.practice.authservice.domain.User;
 
 /**
  * Project        : springboot-microservices
@@ -16,10 +17,6 @@ import lombok.Getter;
  * -----------------------------------------------------------
  * 2025. 1. 2.      dnejdzlr2          최초 생성
  */
-@Data
-@Builder
-public class LoginResponse {
-	private String accessToken;
-	private String tokenType;
-	private String username;
+public interface UserRepository extends JpaRepository<User, Long> {
+	Optional<User> findByUsername(String username);
 }
