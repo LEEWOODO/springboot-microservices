@@ -12,6 +12,9 @@ package woodo.practice.authservice.security;
  * 2025. 1. 2.      dnejdzlr2          최초 생성
  */
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,10 +42,16 @@ public class JwtTokenProvider {
 
 	public JwtTokenProvider(
 		@Value("${jwt.secret}") String jwtSecret,
-		@Value("${jwt.expiration}") long jwtExpiration
-	) {
-		byte[] keyBytes = Decoders.BASE64URL.decode(jwtSecret);
-		this.key = Keys.hmacShaKeyFor(keyBytes);
+		@Value("${jwt.expiration}") long jwtExpiration) {
+		// 입력받은 문자열을 SHA-256으로 해시하여 256비트 키 생성
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(jwtSecret.getBytes(StandardCharsets.UTF_8));
+			// 해시된 값을 Base64로 인코딩하여 키 생성
+			this.key = Keys.hmacShaKeyFor(hash);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("Failed to generate JWT key", e);
+		}
 		this.jwtExpiration = jwtExpiration;
 	}
 
