@@ -15,7 +15,6 @@ import lombok.Getter;
  * 2025. 1. 2.      dnejdzlr2          최초 생성
  */
 @Data
-@Getter
 public class LoginRequest {
 	private String username;
 	private String password;
