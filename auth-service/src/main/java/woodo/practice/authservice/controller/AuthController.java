@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import woodo.practice.authservice.dto.request.LoginRequest;
+import woodo.practice.authservice.dto.request.SignupRequest;
 import woodo.practice.authservice.dto.request.TokenRefreshRequest;
 import woodo.practice.authservice.dto.response.LoginResponse;
+import woodo.practice.authservice.dto.response.SignupResponse;
 import woodo.practice.authservice.dto.response.TokenRefreshResponse;
 import woodo.practice.authservice.service.AuthService;
 
@@ -34,6 +37,11 @@ import woodo.practice.authservice.service.AuthService;
 @Slf4j
 public class AuthController {
 	private final AuthService authService;
+
+	@PostMapping("/signup")
+	public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
+		return ResponseEntity.ok(authService.signup(request));
+	}
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {

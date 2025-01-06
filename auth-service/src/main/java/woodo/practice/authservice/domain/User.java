@@ -6,7 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Project        : springboot-microservices
@@ -21,6 +25,8 @@ import lombok.Data;
  */
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
 	@Id
@@ -30,5 +36,15 @@ public class User {
 	@Column(unique = true)
 	private String username;
 	private String password;
+	private String email;
 	private String role;
+
+	@Builder(builderMethodName = "createUser", access = AccessLevel.PUBLIC)
+	public User(String username, String password, String email, String role) {
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.role = role;
+	}
+
 }
