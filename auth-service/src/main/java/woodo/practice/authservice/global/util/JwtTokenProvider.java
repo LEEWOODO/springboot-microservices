@@ -15,7 +15,6 @@ package woodo.practice.authservice.global.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -23,6 +22,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -65,12 +66,42 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
+	public long getRefreshTokenExpiration() {
+		return refreshTokenExpiration;
+	}
+
 	public String validateRefreshToken(String token) {
+		try {
+			return Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject();
+		} catch (ExpiredJwtException e) {
+			throw new IllegalArgumentException("Expired refresh token");
+		} catch (JwtException e) {
+			throw new IllegalArgumentException("Invalid refresh token");
+		}
+	}
+
+	public String getUsernameFromToken(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(key)
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
 			.getSubject();
+	}
+
+	public long getRemainingTime(String token) {
+		Date expiration = Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.getExpiration();
+
+		return expiration.getTime() - System.currentTimeMillis();
 	}
 }

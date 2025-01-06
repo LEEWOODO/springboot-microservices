@@ -3,6 +3,7 @@ package woodo.practice.authservice.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,5 +43,11 @@ public class AuthController {
 	@PostMapping("/refresh")
 	public ResponseEntity<TokenRefreshResponse> refreshToken(@RequestBody TokenRefreshRequest request) {
 		return ResponseEntity.ok(authService.refreshToken(request));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
+		authService.logout(token.replace("Bearer ", ""));
+		return ResponseEntity.ok().build();
 	}
 }
