@@ -24,7 +24,6 @@ public class JwtAuthenticationFilter implements WebFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-		System.out.println(">>>> exchange = " + exchange);
 		ServerHttpRequest request = exchange.getRequest();
 
 		// Authorization 헤더 확인
@@ -34,8 +33,6 @@ public class JwtAuthenticationFilter implements WebFilter {
 		}
 
 		String token = authHeader.substring(7);
-		System.out.println(">>> token = " + token);
-
 		if (!jwtUtil.isTokenValid(token)) {
 			exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 			return exchange.getResponse().setComplete();
