@@ -15,7 +15,7 @@ package woodo.practice.authservice.global.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -23,6 +23,9 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -56,21 +59,69 @@ public class JwtTokenProvider {
 	}
 
 	private String buildToken(User user, long expiration) {
+		Claims claims = Jwts.claims();
+		claims.put("email", user.getEmail());
+		claims.put("role", user.getRole());
+
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime tokenValidity = now.plusSeconds(expiration);
+
 		return Jwts.builder()
 			.setSubject(user.getUsername())
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + expiration))
-			.claim("role", user.getRole())
+			.setClaims(claims)
+			.setIssuedAt(Date.from(now.toInstant()))
+			.setExpiration(Date.from(tokenValidity.toInstant()))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
 
+	public long getRefreshTokenExpiration() {
+		return refreshTokenExpiration;
+	}
+
 	public String validateRefreshToken(String token) {
-		return Jwts.parserBuilder()
+		try {
+			return Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject();
+		} catch (ExpiredJwtException e) {
+			throw new IllegalArgumentException("Expired refresh token");
+		} catch (JwtException e) {
+			throw new IllegalArgumentException("Invalid refresh token");
+		}
+	}
+
+	public String getUsernameFromToken(String token) {
+		return parseClaims(token).getSubject();
+	}
+
+	public long getRemainingTime(String token) {
+		Date expiration = Jwts.parserBuilder()
 			.setSigningKey(key)
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
-			.getSubject();
+			.getExpiration();
+
+		return expiration.getTime() - System.currentTimeMillis();
+	}
+
+	public String getEmail(String token) {
+		return parseClaims(token).get("email", String.class);
+	}
+
+	public String getRole(String token) {
+		return parseClaims(token).get("role", String.class);
+	}
+
+	public Claims parseClaims(String accessToken) {
+		try {
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+		} catch (ExpiredJwtException e) {
+			return e.getClaims();
+		}
 	}
 }

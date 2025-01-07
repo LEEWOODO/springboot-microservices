@@ -27,20 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// return userRepository.findByUsername(username)
-		// 	.map(user -> org.springframework.security.core.userdetails.User
-		// 		.withUsername(user.getUsername())
-		// 		.password(user.getPassword())
-		// 		.roles(user.getRole())
-		// 		.build())
-		// 	.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
 		return userRepository.findByUsername(username)
 			.map(user -> org.springframework.security.core.userdetails.User
 				.withUsername(user.getUsername())
 				.password(user.getPassword())
-				// roles()메소드는 자동으로 'ROLE_' 접두사를 추가합니다
-				.roles(user.getRole().replace("ROLE_", ""))
+				.roles(user.getRole().name())
 				.build())
 			.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}

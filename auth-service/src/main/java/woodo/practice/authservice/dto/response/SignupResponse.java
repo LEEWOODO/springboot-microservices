@@ -1,23 +1,23 @@
 package woodo.practice.authservice.dto.response;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Project        : springboot-microservices
- * DATE           : 2025. 1. 3.
+ * DATE           : 2025. 1. 6.
  * AUTHOR         : dnejdzlr2 (Woodo Lee)
  * EMAIL          : dnejdzlr2@virnect.com
  * DESCRIPTION    :
  * ===========================================================
  * DATE            AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2025. 1. 3.      dnejdzlr2          최초 생성
+ * 2025. 1. 6.      dnejdzlr2          최초 생성
  */
-@Data
+@Getter
 @Builder
-public class TokenRefreshResponse {
-	private String accessToken;
-	private String refreshToken;
-	private String tokenType;
+public class SignupResponse {
+	private String username;
+	private String email;
+	private String message;
 }

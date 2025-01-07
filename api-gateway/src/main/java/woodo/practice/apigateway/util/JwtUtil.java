@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 
@@ -53,17 +54,20 @@ public class JwtUtil {
 
 	public boolean isTokenValid(String token) {
 		try {
-			Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
+		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+			// log.info("Invalid JWT Token", e);
+			System.out.println("Invalid JWT Token");
 		} catch (ExpiredJwtException e) {
-			System.out.println("Token is expired");
-		} catch (MalformedJwtException e) {
-			System.out.println("Token is malformed");
-		} catch (Exception e) {
-			System.out.println("Token validation failed: " + e.getMessage());
+			// log.info("Expired JWT Token", e);
+			System.out.println("Expired JWT Token");
+		} catch (UnsupportedJwtException e) {
+			// log.info("Unsupported JWT Token", e);
+			System.out.println("Unsupported JWT Token");
+		} catch (IllegalArgumentException e) {
+			// log.info("JWT claims string is empty.", e);
+			System.out.println("JWT claims string is empty.");
 		}
 		return false;
 	}
