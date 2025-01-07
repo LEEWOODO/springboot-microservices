@@ -15,6 +15,7 @@ package woodo.practice.authservice.global.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -22,6 +23,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -57,11 +59,19 @@ public class JwtTokenProvider {
 	}
 
 	private String buildToken(User user, long expiration) {
+		Claims claims = Jwts.claims();
+		claims.put("email", user.getEmail());
+		claims.put("role", user.getRole());
+
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime tokenValidity = now.plusSeconds(expiration);
+
 		return Jwts.builder()
 			.setSubject(user.getUsername())
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + expiration))
-			.claim("role", user.getRole())
+			.setClaims(claims)
+			.setIssuedAt(Date.from(now.toInstant()))
+			.setExpiration(Date.from(tokenValidity.toInstant()))
+			// .claim("role", user.getRole())
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
