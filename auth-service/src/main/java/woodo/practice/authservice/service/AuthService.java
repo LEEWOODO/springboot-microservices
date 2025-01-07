@@ -49,7 +49,7 @@ public class AuthService {
 			throw new IllegalStateException("Account is locked. Please try again later.");
 		}
 
-		try{
+		try {
 			User user = userRepository.findByUsername(loginRequest.getUsername())
 				.orElseThrow(() -> new IllegalArgumentException("User not found."));
 
@@ -141,7 +141,7 @@ public class AuthService {
 			throw new IllegalArgumentException("Email already exists");
 		}
 
-		User user = User.createUser()
+		User user = User.builder()
 			.username(request.getUsername())
 			.email(request.getEmail())
 			.password(passwordEncoder.encode(request.getPassword()))

@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -23,28 +23,26 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2025. 1. 2.      dnejdzlr2          최초 생성
  */
-@Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true)
+	@Column(nullable = false, unique = true)
 	private String username;
+
+	@Column(nullable = false)
 	private String password;
+
+	@Column(nullable = false, unique = true)
 	private String email;
+
+	@Column(nullable = false)
 	private String role;
-
-	@Builder(builderMethodName = "createUser", access = AccessLevel.PUBLIC)
-	public User(String username, String password, String email, String role) {
-		this.username = username;
-		this.password = password;
-		this.email = email;
-		this.role = role;
-	}
-
 }
