@@ -71,7 +71,6 @@ public class JwtTokenProvider {
 			.setClaims(claims)
 			.setIssuedAt(Date.from(now.toInstant()))
 			.setExpiration(Date.from(tokenValidity.toInstant()))
-			// .claim("role", user.getRole())
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -96,12 +95,7 @@ public class JwtTokenProvider {
 	}
 
 	public String getUsernameFromToken(String token) {
-		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
+		return parseClaims(token).getSubject();
 	}
 
 	public long getRemainingTime(String token) {
@@ -113,5 +107,21 @@ public class JwtTokenProvider {
 			.getExpiration();
 
 		return expiration.getTime() - System.currentTimeMillis();
+	}
+
+	public String getEmail(String token) {
+		return parseClaims(token).get("email", String.class);
+	}
+
+	public String getRole(String token) {
+		return parseClaims(token).get("role", String.class);
+	}
+
+	public Claims parseClaims(String accessToken) {
+		try {
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+		} catch (ExpiredJwtException e) {
+			return e.getClaims();
+		}
 	}
 }

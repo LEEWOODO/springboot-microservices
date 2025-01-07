@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import woodo.practice.authservice.domain.RoleType;
 import woodo.practice.authservice.domain.User;
 import woodo.practice.authservice.dto.request.LoginRequest;
 import woodo.practice.authservice.dto.request.SignupRequest;
@@ -145,7 +146,7 @@ public class AuthService {
 			.username(request.getUsername())
 			.email(request.getEmail())
 			.password(passwordEncoder.encode(request.getPassword()))
-			.role("USER")
+			.role(RoleType.USER)
 			.build();
 
 		userRepository.save(user);
