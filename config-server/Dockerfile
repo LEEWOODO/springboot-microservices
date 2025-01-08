@@ -1,7 +1,7 @@
 # JDK 17 이미지 사용
 FROM eclipse-temurin:17-jdk
 
-EXPOSE 9191
+EXPOSE 8888
 
 # 작업 디렉토리 설정
 WORKDIR /app
