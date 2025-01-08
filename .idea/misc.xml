@@ -9,6 +9,9 @@
         <option value="$USER_HOME$/Desktop/springboot-microservices/service-registry/pom.xml" />
         <option value="$PROJECT_DIR$/service-registry/pom.xml" />
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/auth-service/pom.xml" />
+        <option value="$PROJECT_DIR$/organization-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
