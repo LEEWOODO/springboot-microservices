@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  service-registry:
+    image: harbor.virnect.com:5000/ai-dept-gateway/service-registry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - msa-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - msa-network
+  config-server:
+    image: harbor.virnect.com:5000/ai-dept-gateway/config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - service-registry
+      - rabbitmq
+    networks:
+      - msa-network
+
+
+networks:
+  msa-network:
+    driver: bridge
